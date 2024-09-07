@@ -2,7 +2,7 @@ import os
 
 from board import Board
 from player import Player
-from train import QLearningAgent, train_with_human_play
+from train import QLearningAgent, train_with_self_play
 
 
 class TicTacToeGame:
@@ -22,16 +22,20 @@ class TicTacToeGame:
             print("No existing model found. Starting with a new model.")
 
         while True:
-            choice = input("Do you want to (1) Play a game or (2) Train the AI? Enter 1 or 2: ").strip()
-            if choice == '1':
+            choice = input(
+                "Do you want to (1) Play a game or (2) Train the AI? Enter 1 or 2: "
+            ).strip()
+            if choice == "1":
                 self.start_new_game()
-            elif choice == '2':
+            elif choice == "2":
                 self.train_ai()
             else:
                 print("Invalid choice. Please enter 1 or 2.")
                 continue
 
-            play_again = input("Would you like to continue? [yes|y]/[no|n]: ").strip().lower()
+            play_again = (
+                input("Would you like to continue? [yes|y]/[no|n]: ").strip().lower()
+            )
             if play_again in ["no", "n"]:
                 print("Bye! Come back soon")
                 break
@@ -41,7 +45,9 @@ class TicTacToeGame:
     def start_new_game(self):
         board = Board()
         human_player = Player(is_human=True)
-        computer_player = Player(is_human=False, use_rl=True, q_table=self.agent.q_table)
+        computer_player = Player(
+            is_human=False, use_rl=True, q_table=self.agent.q_table
+        )
         current_player = human_player
 
         game_history = []
@@ -67,19 +73,30 @@ class TicTacToeGame:
 
                 # Update Q-table
                 for state, action in reversed(game_history):
-                    available_actions = [i for i in range(9) if board.game_board[i // 3][i % 3] == Board.EMPTY_CELL]
-                    self.agent.update_q_table(state, action, final_reward, next_state, available_actions)
-                    final_reward *= self.agent.gamma  # Discount the reward for earlier actions
+                    available_actions = [
+                        i
+                        for i in range(9)
+                        if board.game_board[i // 3][i % 3] == Board.EMPTY_CELL
+                    ]
+                    self.agent.update_q_table(
+                        state, action, final_reward, next_state, available_actions
+                    )
+                    final_reward *= (
+                        self.agent.gamma
+                    )  # Discount the reward for earlier actions
 
                 break
 
             state = next_state
-            current_player = human_player if current_player == computer_player else computer_player
+            current_player = (
+                human_player if current_player == computer_player else computer_player
+            )
 
         # Save the updated Q-table after each game
         self.agent.save_model(self.q_table_file)
 
     def train_ai(self):
         num_games = int(input("How many training games do you want to play? "))
-        train_with_human_play(self.agent, num_games)
+        train_with_self_play(self.agent, num_games)
+        # train_with_human_play(self.agent, num_games)
         self.agent.save_model(self.q_table_file)

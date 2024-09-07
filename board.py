@@ -28,7 +28,10 @@ class Board:
         print("| 1 | 2 | 3 |\n| 4 | 5 | 6 |\n| 7 | 8 | 9 |")
 
     def step(self, move, player_marker):
-        row, col = move.get_row(), move.get_column()
+        if isinstance(move, int):
+            row, col = (move - 1) // 3, (move - 1) % 3
+        else:
+            row, col = move.get_row(), move.get_column()
 
         if self.game_board[row][col] == self.EMPTY_CELL:
             self.game_board[row][col] = (
@@ -37,7 +40,7 @@ class Board:
             next_state = self.board_to_state()
 
             if self.check_winner(player_marker):
-                return next_state, 1 if player_marker == "X" else -1, True, {}
+                return next_state, 1, True, {}
             elif self.check_is_tie():
                 return next_state, 0, True, {}
             else:
