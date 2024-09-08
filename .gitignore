@@ -1,1 +1,4 @@
 *.pyc
+note.txt
+.python-version
+.DS*

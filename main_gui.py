@@ -1,15 +1,22 @@
 import os
 import sys
 
+from board import Board
+from game import TicTacToeGame
+from player import Player
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QLabel, QMessageBox,
                              QPushButton, QVBoxLayout, QWidget)
-
-from board import Board
-from game import TicTacToeGame
-from player import Player
 from train import QLearningAgent
+
+
+def resource_path(relative_path):
+    """Get the absolute path to the resource (works for both dev and PyInstaller bundled mode)"""
+    if hasattr(sys, "_MEIPASS"):
+        return os.path.join(sys._MEIPASS, relative_path)
+    else:
+        return os.path.join(os.path.abspath("."), relative_path)
 
 
 class TicTacToeGUI(QWidget):
@@ -17,7 +24,7 @@ class TicTacToeGUI(QWidget):
         super().__init__()
         self.board = Board()
         self.agent = QLearningAgent()
-        self.agent.load_model("q_table.pkl")  # Load the trained model
+        self.agent.load_model(resource_path("q_table.pkl"))  # Load the trained model
         self.human_player = Player(is_human=True)
         self.ai_player = Player(is_human=False, use_rl=True, q_table=self.agent.q_table)
         self.current_player = self.human_player
@@ -127,7 +134,7 @@ class TicTacToeGUI(QWidget):
 
 
 if __name__ == "__main__":
-    if not os.path.exists("q_table.pkl"):
+    if not os.path.exists(resource_path("q_table.pkl")):
         game = TicTacToeGame()
         game.train_ai()
     app = QApplication(sys.argv)
