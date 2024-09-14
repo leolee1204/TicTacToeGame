@@ -1,6 +1,21 @@
 # TicTacToeGame
 Complete Game Development Design
 
+#### workflow
+1. design class
+2. computer training by self
+3. write pyqt6
+4. write flask
+5. write html
+6. write dockerfile
+7. write aws_ecr.sh
+8. sh aws_ecr.sh
+9. use ec2 docker pull ecr image
+10. run docker service
+11. open security inbound and outbound
+12. into url page
+
+#### package gui 
 * Python-version:3.8.10
 * pip install -r requirements.txt
 * python main_gui.py

@@ -2,6 +2,6 @@
 note.txt
 .python-version
 .DS*
-*.sh
+aws_ecr.sh
 *.pem
 .vscode
