@@ -127,6 +127,7 @@
                     status.textContent = data.game_over;
                     gameActive = false;
                     alert(data.game_over);
+                    resetGame();
                 } else {
                     currentPlayer = data.current_player;
                     status.textContent = currentPlayer === 'X' ? "Your turn (X)" : "AI's turn (O)";
