@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe-Game by Leo - Reinforcement learning by self 20 million times</title>
+    <style>
+        body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f0f0f0;
+    }
+
+    .game-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Centers everything horizontally */
+        text-align: center;
+    }
+
+    .board {
+        display: grid;
+        grid-template-columns: repeat(3, 100px);
+        gap: 5px;
+        margin-bottom: 20px;
+        justify-content: center; /* Centers the grid itself */
+    }
+
+    .cell {
+        width: 100px;
+        height: 100px;
+        font-size: 40px;
+        font-weight: bold;
+        background-color: black;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    .cell.X { color: green; }
+    .cell.O { color: red; }
+
+    #status {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    #reset {
+        font-size: 18px;
+        padding: 10px 20px;
+        background-color: black;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    .subtitle {
+        font-size: 16px;
+        margin-bottom: 20px;
+        color: #666;
+    }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Tic-Tac-Toe-Game by Leo</h1>
+        <p class="subtitle">Reinforcement learning by self 20 million times</p>
+        <div id="status">Your turn (X)</div>
+        <div class="board" id="board"></div>
+        <button id="reset">Reset Game</button>
+    </div>
+
+    <script>
+        const board = document.getElementById('board');
+        const status = document.getElementById('status');
+        const resetButton = document.getElementById('reset');
+        let gameBoard = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let gameActive = true;
+
+        function createBoard() {
+            board.innerHTML = '';
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('button');
+                cell.classList.add('cell');
+                cell.dataset.index = i;
+                cell.addEventListener('click', handleCellClick);
+                board.appendChild(cell);
+            }
+        }
+
+        function updateBoard() {
+            const cells = board.getElementsByClassName('cell');
+            for (let i = 0; i < 9; i++) {
+                cells[i].textContent = gameBoard[i];
+                cells[i].classList.remove('X', 'O');
+                if (gameBoard[i]) {
+                    cells[i].classList.add(gameBoard[i]);
+                }
+            }
+        }
+
+        function handleCellClick(event) {
+            const index = event.target.dataset.index;
+            if (gameBoard[index] === '' && gameActive && currentPlayer === 'X') {
+                makeMove(index);
+            }
+        }
+
+        function makeMove(index) {
+            fetch('/make_move', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ move: parseInt(index) + 1 }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                gameBoard = data.board;
+                updateBoard();
+                if (data.game_over) {
+                    status.textContent = data.game_over;
+                    gameActive = false;
+                    alert(data.game_over);
+                } else {
+                    currentPlayer = data.current_player;
+                    status.textContent = currentPlayer === 'X' ? "Your turn (X)" : "AI's turn (O)";
+                }
+            });
+        }
+
+        function resetGame() {
+            fetch('/reset_game', {
+                method: 'POST',
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    gameBoard = data.board;
+                    currentPlayer = data.current_player;
+                    gameActive = true;
+                    updateBoard();
+                    status.textContent = "Your turn (X)";
+                }
+            });
+        }
+
+        resetButton.addEventListener('click', resetGame);
+        createBoard();
+    </script>
+</body>
+</html>

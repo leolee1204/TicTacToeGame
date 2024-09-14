@@ -4,10 +4,17 @@ import sys
 from board import Board
 from game import TicTacToeGame
 from player import Player
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QLabel, QMessageBox,
-                             QPushButton, QVBoxLayout, QWidget)
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QFont
+from PyQt6.QtWidgets import (
+    QApplication,
+    QHBoxLayout,
+    QLabel,
+    QMessageBox,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
 from train import QLearningAgent
 
 
@@ -37,7 +44,7 @@ class TicTacToeGUI(QWidget):
         layout = QVBoxLayout()
 
         self.status_label = QLabel("Your turn (X)")
-        self.status_label.setAlignment(Qt.AlignCenter)
+        self.status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.status_label.setStyleSheet("background-color: black;color: white;")
         layout.addWidget(self.status_label)
 
@@ -47,7 +54,7 @@ class TicTacToeGUI(QWidget):
             for j in range(3):
                 button = QPushButton("")
                 button.setFixedSize(80, 80)
-                button.setFont(QFont("Arial", 40, QFont.Bold))
+                button.setFont(QFont("Arial", 40, QFont.Weight.Bold))
                 button.setStyleSheet("background-color: black; color: white;")
                 button.clicked.connect(
                     lambda _, row=i, col=j: self.on_button_click(row, col)
@@ -58,14 +65,14 @@ class TicTacToeGUI(QWidget):
 
         reset_button = QPushButton("Reset Game")
         reset_button.setFixedSize(300, 60)
-        reset_button.setFont(QFont("Arial", 20, QFont.Bold))
+        reset_button.setFont(QFont("Arial", 20, QFont.Weight.Bold))
         reset_button.setStyleSheet("background-color: black; color: white;")
         reset_button.clicked.connect(self.reset_game)
         layout.addWidget(reset_button)
 
         quit_button = QPushButton("Quit Game")
         quit_button.setFixedSize(300, 60)
-        quit_button.setFont(QFont("Arial", 20, QFont.Bold))
+        quit_button.setFont(QFont("Arial", 20, QFont.Weight.Bold))
         quit_button.setStyleSheet("background-color: black; color: white;")
         quit_button.clicked.connect(QApplication.quit)
         layout.addWidget(quit_button)
@@ -140,4 +147,4 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     ex = TicTacToeGUI()
     ex.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

@@ -2,3 +2,6 @@
 note.txt
 .python-version
 .DS*
+*.sh
+*.pem
+.vscode

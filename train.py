@@ -32,6 +32,7 @@ class QLearningAgent:
         return self.q_table.get((tuple(state), action), 0.0)
 
     def choose_action(self, state, available_actions):
+        # epsilon 探索率
         if random.random() < self.epsilon:
             return random.choice(available_actions)
 
@@ -49,6 +50,8 @@ class QLearningAgent:
         old_qstate：這是狀態-動作對 ( , )的當前 Q 值action。它代表智能體對在該狀態下採取該操作的預期未來獎勵的當前估計。
         reward：在當前狀態下採取行動後立即獲得的獎勵。
         next_max_q：這是下一個狀態 ( ) 的最大 Q 值next_state。它代表智能體對從該點開始的最佳可能未來獎勵的估計（透過查看下一個狀態中的最佳可能行動來計算）。
+        
+        new_q = 舊的q值 + 學習率 * (當下獎勵 + 折扣因子*下一步最大q值 - 舊的q值)
         """
         new_q = old_q + self.alpha * (reward + self.gamma * next_max_q - old_q)
         self.q_table[(tuple(state), action)] = new_q
@@ -68,7 +71,7 @@ class QLearningAgent:
 
 def play_self_training_game(agent, board):
     """
-    machine training
+    slef play with train
     """
     state = board.board_to_state()
     game_history = []
@@ -79,7 +82,10 @@ def play_self_training_game(agent, board):
         action = agent.choose_action(state, available_actions)
         move = Move(action + 1)
         game_history.append((state, action, current_player))
-
+        """
+        board.step(move, player_marker)
+        next_state, reward, done, _ = next_state, 0, False, {}
+        """
         next_state, reward, done, _ = board.step(
             move, "X" if current_player == Board.PLAYER_X else "O"
         )
@@ -90,6 +96,7 @@ def play_self_training_game(agent, board):
             return game_history, adjusted_reward
 
         state = next_state
+        # swithch player
         current_player = (
             Board.PLAYER_O if current_player == Board.PLAYER_X else Board.PLAYER_X
         )
@@ -97,18 +104,21 @@ def play_self_training_game(agent, board):
 
 def train_with_self_play(agent, num_games=10000):
     """
-    machine training
+    training 20 minllions times
     """
     board = Board()
 
     # tqdm 進度條
     for _ in tqdm(range(num_games), desc="Training Progress"):
         board.reset_board()
+        # agent:QLearningAgent()
         game_history, final_reward = play_self_training_game(agent, board)
 
         # Update Q-table
         for state, action, player in reversed(game_history):
+            # next_state :[1,0,-1,0,0,1,-1,0,0]]
             next_state = board.board_to_state()
+            # available_actions [1,3,4,7,8]
             available_actions = [
                 i for i in range(9) if next_state[i] == Board.EMPTY_CELL
             ]
