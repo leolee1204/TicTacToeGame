@@ -109,10 +109,12 @@ def train_with_self_play(agent, num_games=10000):
     board = Board()
 
     # tqdm 進度條
+    rewards = []
     for _ in tqdm(range(num_games), desc="Training Progress"):
         board.reset_board()
         # agent:QLearningAgent()
         game_history, final_reward = play_self_training_game(agent, board)
+        rewards.append(final_reward)
 
         # Update Q-table
         for state, action, player in reversed(game_history):
@@ -132,3 +134,5 @@ def train_with_self_play(agent, num_games=10000):
             final_reward *= agent.gamma  # Discount the reward for earlier actions
 
     agent.save_model()
+    average_reward = sum(rewards) / len(rewards)
+    print(average_reward)
