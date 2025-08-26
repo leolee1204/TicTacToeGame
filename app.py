@@ -109,5 +109,5 @@ if __name__ == "__main__":
 
         training_game = TrainingGame()
         training_game.train_ai()
-    app.run(debug=True)
-    # app.run(debug=True, port=5001)
+    # app.run(debug=True)
+    app.run(debug=True, port=5001)

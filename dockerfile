@@ -14,10 +14,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install gunicorn
 
 # Make port 5000 available to the world outside this container
-EXPOSE 5000
+EXPOSE 5001
 
 # Define environment variable
 ENV NAME tic_tac_toe
 
 # Run the application with Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5001", "app:app"]
